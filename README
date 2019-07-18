@@ -1,0 +1,47 @@
+######################
+#####   calcRnn  #####
+######################
+
+This code computes the distance to nth nearest neighbor for particle sets in 3D.  It uses 
+kdTrees with the sliding midpoint rule.  The code can be run in either MPI or hybrid MPI+OpenMP modes.  Finally, 
+it uses the structure of the files containing the particles themselves to do domain decomposition.  This scheme 
+works well when paired with large simulations run over many cores, but it can fail for simulations in which the particles 
+are all in justa few files.  The hybrid MPI+OpenMP feature should help with this, but there will be some limit where even 
+this will not help.  Also, note that the hybrid code just uses OpenMP to parallelize the nearest-neighbor finding part of the 
+code, not the I/O.  If the I/O time dominates, then the hybrid code will be *slower* when using the same total number of 
+cores than the MPI version.
+
+######################
+How to use the code
+######################
+
+1) MPI only mode
+
+<mpirun command> calcRnn calcRnn.cfg [Nio]
+
+calcRnn.cfg - this is a configuration file, see the example config file included
+Nio - this is an optional parameter which specifies the number of tasks which do I/O in parallel
+      this parameter must be greater than zero and less than or equal to the total number of MPI tasks
+
+2) MPI+OpenMP hybrid mode
+
+To use the code this way you must compile the code with the USEOPENMP flag.  Then you call the code like this
+
+<mpirun command> calcRnn calcRnn.cfg Nthreads [Nio]
+
+calcRnn.cfg - see above
+Nthreads - you must specify the number of threads for each MPI task
+Nio - see above
+
+######################
+Output format
+######################
+
+Each output is pure fortran-style binary and contains in order
+
+<# of points in file>,<# of nearest neighbors> - these are both 4 byte integers
+<dRnn1>,<dRnn2>,<dRnn3>,... - these are all 4 byte floats
+
+The ordering of the Rnn values in each output matches the order of the particles in each snapshot file.  
+The numbering of the files themselves follows the order listed in the text file that specifies them as listed in the config file.
+
