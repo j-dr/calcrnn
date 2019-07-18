@@ -8,7 +8,7 @@
 
 
 #select your computer
-COMP="cori"
+COMP="cori-haswell"
 #COMP="edison"
 #COMP="orange"
 #COMP="ranger"
@@ -52,7 +52,7 @@ EXTRACFLAGS =  -Wall -W -Wmissing-prototypes -Wstrict-prototypes -Wconversion -W
 EXTRACLIB   =
 endif
 
-ifeq ($(COMP),"cori")
+ifeq ($(COMP),"cori-haswell")
 CC          =  cc
 OPTIMIZE    =  -g -O0 #-O3 #-Wall -wd981 #-wd1419 -wd810
 OPENMPFLAG  =  -fopenmp
